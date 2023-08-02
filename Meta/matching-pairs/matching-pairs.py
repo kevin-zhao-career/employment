@@ -3,62 +3,67 @@ import math
 
 
 # Add any helper functions you may need here
-def has_valid_input(first_string : str, second_string : str) -> bool:
-  return (len(first_string) == len(second_string)) and (len(first_string) >= 2)
+def has_valid_input(string_1 : str, string_2 : str) -> bool:
+  return (len(string_1) == len(string_2)) and (len(string_1) >= 2)
 
 def get_has_unique_characters(string : str) -> bool:
   return (len(string) <= 256) and (len(set(string)) == len(string))
 
-def get_matching_pair_count_perfect_match_partial_match_tuple(first_string : str, second_string : str):
+def get_matching_pair_count_perfect_match_partial_match_tuple(string_1 : str, string_2 : str):
   matching_pair_count = 0
   has_perfect_match = False
   has_partial_match = False
   
   unmatched_pairs = set()
-  first_string_unmatched_set = set()
-  second_string_unmatched_set = set()
+  string_1_unmatched_set = set()
+  string_2_unmatched_set = set()
   
-  for first_string_character, second_string_character in zip(first_string, second_string):  
-    if (first_string_character == second_string_character):
+  for string_1_character, string_2_character in zip(string_1, string_2):  
+    if (string_1_character == string_2_character):
       matching_pair_count += 1
       continue
     
     if has_perfect_match:
       continue
 
-    unmatched_pairs.add((first_string_character, second_string_character))
-    first_string_unmatched_set.add(first_string_character)
-    first_string_unmatched_set.add(second_string_character)
+    unmatched_pairs.add((string_1_character, string_2_character))
+    string_1_unmatched_set.add(string_1_character)
+    string_2_unmatched_set.add(string_2_character)
     
-    has_perfect_match |= ((second_string_character, first_string_character) in unmatched_pairs)
-    has_partial_match |= (((second_string_character) in first_string_unmatched_set) or ((first_string_character) in second_string_unmatched_set))
+    has_perfect_match |= ((string_2_character, string_1_character) in unmatched_pairs)
+    has_partial_match |= (((string_2_character) in string_1_unmatched_set) or ((string_1_character) in string_2_unmatched_set))
     
   return (matching_pair_count, has_perfect_match, has_partial_match)  
 
-def get_matching_pair_count(first_string : str, second_string : str, matching_pair_count : int, has_perfect_match : bool, has_partial_match : bool) -> bool:
-    if matching_pair_count == len(first_string):
-      has_unique_characters = get_has_unique_characters(first_string)
-      return (matching_pair_count - 2) if has_unique_characters else matching_pair_count
+def get_matching_pair_count(string_1 : str, string_2 : str, matching_pair_count : int, has_perfect_match : bool, has_partial_match : bool) -> bool:
+    if not has_valid_input(string_1, string_2):
+      raise ValueErrror("Invalid Input Detected")   
+    
+    string_1_has_unique_characters = get_has_unique_characters(string_1)
+    string_2_has_unique_characters = get_has_unique_characters(string_2)
+    
+    if matching_pair_count == len(string_1):
+      return (matching_pair_count - 2) if string_1_has_unique_characters else matching_pair_count
+  
+    unmatched_pair_count = len(string_1) - matching_pair_count
+    print("UnmatchedPair Count: ", unmatched_pair_count)
   
     if has_perfect_match:
       return matching_pair_count + 2
   
     if has_partial_match:
-      return matching_pair_count + 1
+      return (matching_pair_count + 1) if (unmatched_pair_count > 1) else (max(matching_pair_count - 1, 0))
     
-    return matching_pair_count
+    return matching_pair_count if ((unmatched_pair_count > 1) or (not string_1_has_unique_characters) or (not string_2_has_unique_characters)) else (max(matching_pair_count - 1, 0))
   
 
-def matching_pairs(first_string : str, second_string : str):
-  if not has_valid_input(first_string, second_string):
+def matching_pairs(string_1 : str, string_2 : str):
+  if not has_valid_input(string_1, string_2):
     raise ValueErrror("Invalid Input Detected")
   
-  (matching_pair_count, has_perfect_match, has_partial_match) = get_matching_pair_count_perfect_match_partial_match_tuple(first_string, second_string)
+  (matching_pair_count, has_perfect_match, has_partial_match) = get_matching_pair_count_perfect_match_partial_match_tuple(string_1, string_2)
   
-  return get_matching_pair_count(first_string, second_string, matching_pair_count, has_perfect_match, has_partial_match)
-
-
-
+  return get_matching_pair_count(string_1, string_2, matching_pair_count, has_perfect_match, has_partial_match)
 
 # These are the tests we use to determine if the solution is correct.
 # You can add your own at the bottom.
@@ -82,19 +87,56 @@ def check(expected, output):
     printInteger(expected)
     print(' Your output: ', end='')
     printInteger(output)
-    print()
   test_case_number += 1
+  #print("\n")
+  
+def advanced_check(string_1, string_2, expected_output):
+  actual_output = matching_pairs(string_1, string_2)
+  print("String 1: ", string_1, " String 2: ", string_2)
+  check(expected_output, actual_output)
 
 if __name__ == "__main__":
-  s_1, t_1 = "abcde", "adcbe"
-  expected_1 = 5
-  output_1 = matching_pairs(s_1, t_1)
-  check(expected_1, output_1)
-
-  s_2, t_2 = "abcd", "abcd"
-  expected_2 = 2
-  output_2 = matching_pairs(s_2, t_2)
-  check(expected_2, output_2)
+  advanced_check("abcde", "adcbe", 5)
+  advanced_check("abcd", "abcd", 2)
 
   # Add your own test cases here
+  advanced_check('abcd', 'abcd', 2)
+  advanced_check('abcde', 'adcbe', 5)
+
+  advanced_check('aa', 'aa', 2)
+  advanced_check('aa', 'bb', 0)
+
+  advanced_check('at', 'at', 0)
+  advanced_check('at', 'ta', 2)
+  advanced_check('ax', 'ya', 1)
+
+  advanced_check('ax', 'aa', 1)
+  advanced_check('aa', 'ax', 1)
+
+  advanced_check('abx', 'abb', 2)
+  advanced_check('abb', 'axb', 2)
+
+  advanced_check('ax', 'ay', 0)
+  advanced_check('axb', 'ayb', 1)
+
+  advanced_check('ABC', 'ADB', 2)
+  advanced_check('abcde', 'axcbe', 4)
+  advanced_check('docomo', 'docomo', 6)
+
+  advanced_check('abcdc', 'baccd', 3)
+  advanced_check('abcdx', 'abxcc', 4)
+
+  advanced_check('abcd', 'adcb', 4)
+  advanced_check('mno', 'mno', 1)
+  advanced_check('abcde', 'adcbe', 5)
+
+  advanced_check('abcd', 'abcd', 2)
+  advanced_check('abcd', 'efgh', 0)
+  advanced_check('abcd', 'abce', 2)
+  advanced_check('abczz', 'abcee', 3)
+  advanced_check('abc', 'abd', 1)
+  advanced_check('mnode', 'mnoef', 4)
+
+  advanced_check('abxce', 'abcdx', 3)
+  advanced_check('dd', 'dd', 2)
   
