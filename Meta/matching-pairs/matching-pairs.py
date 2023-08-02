@@ -4,12 +4,12 @@ import math
 
 # Add any helper functions you may need here
 def has_valid_input(first_string : str, second_string : str) -> bool:
-  return (len(first_string) == len(second_string):) and (len(first_string) >= 2)
+  return (len(first_string) == len(second_string)) and (len(first_string) >= 2)
 
-def has_unique_characters(string : str) -> bool:
+def get_has_unique_characters(string : str) -> bool:
   return (len(string) <= 256) and (len(set(string)) == len(string))
 
-def get_matching_pair_count_perfect_match_partial_match_tuple(first_string : str, second_string : str) -> tuple[int, bool bool]:
+def get_matching_pair_count_perfect_match_partial_match_tuple(first_string : str, second_string : str):
   matching_pair_count = 0
   has_perfect_match = False
   has_partial_match = False
@@ -37,7 +37,7 @@ def get_matching_pair_count_perfect_match_partial_match_tuple(first_string : str
 
 def get_matching_pair_count(first_string : str, second_string : str, matching_pair_count : int, has_perfect_match : bool, has_partial_match : bool) -> bool:
     if matching_pair_count == len(first_string):
-      has_unique_characters = has_unique_characters(first_string)
+      has_unique_characters = get_has_unique_characters(first_string)
       return (matching_pair_count - 2) if has_unique_characters else matching_pair_count
   
     if has_perfect_match:
