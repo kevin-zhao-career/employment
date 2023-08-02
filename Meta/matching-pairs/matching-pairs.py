@@ -9,29 +9,35 @@ def has_valid_input(string_1 : str, string_2 : str) -> bool:
 def get_has_unique_characters(string : str) -> bool:
   return (len(string) <= 256) and (len(set(string)) == len(string))
 
-def get_matching_pair_count_perfect_match_partial_match_tuple(string_1 : str, string_2 : str):
-  matching_pair_count = 0
-  has_perfect_match = False
+def get_has_partial_match_perfect_match_tuple(string_1 : str, string_2 :str):
   has_partial_match = False
+  has_perfect_match = False
   
   unmatched_pairs = set()
   string_1_unmatched_set = set()
   string_2_unmatched_set = set()
   
-  for string_1_character, string_2_character in zip(string_1, string_2):  
+  for string_1_character, string_2_character in zip(string_1, string_2):
     if (string_1_character == string_2_character):
-      matching_pair_count += 1
       continue
     
-    if has_perfect_match:
-      continue
-
     unmatched_pairs.add((string_1_character, string_2_character))
     string_1_unmatched_set.add(string_1_character)
     string_2_unmatched_set.add(string_2_character)
     
-    has_perfect_match |= ((string_2_character, string_1_character) in unmatched_pairs)
     has_partial_match |= (((string_2_character) in string_1_unmatched_set) or ((string_1_character) in string_2_unmatched_set))
+    has_perfect_match |= ((string_2_character, string_1_character) in unmatched_pairs)
+  
+  return (has_partial_match, has_perfect_match)
+
+def get_matching_pair_count_perfect_match_partial_match_tuple(string_1 : str, string_2 : str):
+  matching_pair_count = 0
+  
+  (has_partial_match, has_perfect_match) = get_has_partial_match_perfect_match_tuple(string_1, string_2)
+  
+  for string_1_character, string_2_character in zip(string_1, string_2):  
+    if (string_1_character == string_2_character):
+      matching_pair_count += 1
     
   return (matching_pair_count, has_perfect_match, has_partial_match)  
 
@@ -46,7 +52,6 @@ def get_matching_pair_count(string_1 : str, string_2 : str, matching_pair_count 
       return (matching_pair_count - 2) if string_1_has_unique_characters else matching_pair_count
   
     unmatched_pair_count = len(string_1) - matching_pair_count
-    print("UnmatchedPair Count: ", unmatched_pair_count)
   
     if has_perfect_match:
       return matching_pair_count + 2
