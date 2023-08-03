@@ -7,9 +7,9 @@ def has_valid_input(string_1 : str, string_2 : str) -> bool:
   return (len(string_1) == len(string_2)) and (len(string_1) >= 2)
 
 def get_has_unique_characters(string : str) -> bool:
-  return (len(string) <= 256) and (len(set(string)) == len(string))
+  return (len(string) <= 256) and (len(set(string)) == len(string)) 
 
-def get_has_partial_match_perfect_match_tuple(string_1 : str, string_2 :str):
+def get_has_partial_match_perfect_match_tuple(string_1 : str, string_2 : str):
   has_partial_match = False
   has_perfect_match = False
   
@@ -48,8 +48,8 @@ def get_matching_pair_count(string_1 : str, string_2 : str, matching_pair_count 
     string_1_has_unique_characters = get_has_unique_characters(string_1)
     string_2_has_unique_characters = get_has_unique_characters(string_2)
     
-    if matching_pair_count == len(string_1):
-      return (matching_pair_count - 2) if string_1_has_unique_characters else matching_pair_count
+    if ((matching_pair_count == len(string_1)) or (matching_pair_count == len(string_2))):
+      return (matching_pair_count - 2) if (string_1_has_unique_characters or string_2_has_unique_characters) else (matching_pair_count)
   
     unmatched_pair_count = len(string_1) - matching_pair_count
   
@@ -57,9 +57,9 @@ def get_matching_pair_count(string_1 : str, string_2 : str, matching_pair_count 
       return matching_pair_count + 2
   
     if has_partial_match:
-      return (matching_pair_count + 1) if (unmatched_pair_count > 1) else (max(matching_pair_count - 1, 0))
+      return (matching_pair_count + 1) if (unmatched_pair_count > 1) else (matching_pair_count - 1)
     
-    return matching_pair_count if ((unmatched_pair_count > 1) or (not string_1_has_unique_characters) or (not string_2_has_unique_characters)) else (max(matching_pair_count - 1, 0))
+    return matching_pair_count if ((unmatched_pair_count > 1) or (not string_1_has_unique_characters) or (not string_2_has_unique_characters)) else (matching_pair_count - 1)
   
 
 def matching_pairs(string_1 : str, string_2 : str):
